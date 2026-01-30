@@ -1,0 +1,192 @@
+object Form1: TForm1
+  Left = 250 
+  Height = 500
+  Top = 250
+  Width = 800
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  ClientHeight = 500
+  ClientWidth = 800
+  Color = clCream
+  LCLVersion = '4.4.0.0'
+  OnActivate = FormCreate
+  OnCloseQuery = FormCloseQuery
+  object PanelLeft: TPanel
+    Left = 10
+    Height = 410
+    Top = 24
+    Width = 240
+    BevelColor = clNone
+    ClientHeight = 410
+    ClientWidth = 240
+    ParentBackground = False
+    TabOrder = 0
+    object LabelTimer: TLabel
+      Left = 20
+      Height = 48
+      Top = 296
+      Width = 200
+      Alignment = taCenter
+      AutoSize = False
+      Caption = '0:00:00'
+      Font.Height = -48
+      Font.Name = 'Monospace'
+      ParentFont = False
+    end
+    object ButtonNewExp: TButton
+      Left = 20
+      Height = 40
+      Top = 76
+      Width = 200
+      Caption = 'NewExp'
+      Font.Height = -21
+      Font.Name = 'Sans Serif'
+      ParentFont = False
+      TabOrder = 1
+      OnClick = ButtonNewExpClick
+    end
+    object ButtonStart: TButton
+      Left = 20
+      Height = 40
+      Top = 126
+      Width = 200
+      Caption = 'Start'
+      Color = clSkyBlue
+      Font.Height = -21
+      Font.Name = 'Sans'
+      ParentFont = False
+      TabOrder = 2
+      OnClick = ButtonStartClick
+    end
+    object ButtonQuit: TButton
+      Left = 20
+      Height = 40
+      Top = 226
+      Width = 200
+      Caption = 'Quit'
+      Font.Height = -21
+      Font.Name = 'Sans Serif'
+      ParentFont = False
+      TabOrder = 4
+      OnClick = ButtonQuitClick
+    end
+    object LabelResult: TLabel
+      Left = 20
+      Height = 33
+      Top = 366
+      Width = 200
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Response'
+      Font.Height = -32
+      Font.Name = 'Sans'
+      ParentFont = False
+    end
+    object ButtonSave: TButton
+      Left = 20
+      Height = 40
+      Top = 176
+      Width = 200
+      Caption = 'Save'
+      Font.Height = -21
+      Font.Name = 'Sans Serif'
+      ParentFont = False
+      TabOrder = 3
+      OnClick = ButtonSaveClick
+    end
+    object ComboBoxLang: TComboBox
+      Left = 10
+      Height = 32
+      Top = 16
+      Width = 220
+      Font.Height = -21
+      Font.Name = 'Sans Serif'
+      ItemHeight = 0
+      ParentFont = False
+      ParentShowHint = False
+      ReadOnly = True
+      TabOrder = 0
+      Text = 'ComboBoxLang'
+      OnChange = ComboBoxLangChange
+    end
+  end
+  object PanelSpeed: TPanel
+    Left = 264
+    Height = 103
+    Top = 22
+    Width = 500
+    BevelColor = clNone
+    ClientHeight = 103
+    ClientWidth = 500
+    ParentBackground = False
+    TabOrder = 1
+    object LabelSpeed: TLabel
+      Left = 10
+      Height = 25
+      Top = 10
+      Width = 283
+      Anchors = [akTop, akLeft, akRight]
+      Caption = 'Speed'
+      Font.Height = -24
+      Font.Name = 'Sans'
+      ParentFont = False
+    end
+    object SliderSpeed: TTrackBar
+      Left = 30
+      Height = 36
+      Top = 50
+      Width = 400
+      Position = 7
+      OnChange = SliderSpeedChange
+      ParentColor = False
+      TabOrder = 0
+    end
+    object Panel1: TPanel
+      Left = 0
+      Height = 50
+      Top = 112
+      Width = 170
+      Caption = 'Panel1'
+      ParentBackground = False
+      TabOrder = 1
+    end
+  end
+  object PanelImage: TPanel
+    Left = 248
+    Height = 340
+    Top = 140
+    Width = 540
+    BevelColor = clNone
+    ClientHeight = 340
+    ClientWidth = 540
+    Color = 15658734
+    DoubleBuffered = True
+    ParentBackground = False
+    ParentColor = False
+    ParentDoubleBuffered = False
+    TabOrder = 2
+    object PaintBox1: TPaintBox
+      Left = 20
+      Height = 301
+      Top = 20
+      Width = 497
+      OnMouseDown = PaintBox1MouseDown
+      OnPaint = PaintBox1Paint
+    end
+  end
+  object VariableTimer: TTimer
+    Interval = 50
+    OnTimer = VariableTimerTimer
+    Left = 232
+    Top = 280
+  end
+  object Timer1: TTimer
+    OnTimer = Timer1Timer
+    Left = 232
+    Top = 336
+  end
+  object SaveDialog1: TSaveDialog
+    Left = 232
+    Top = 392
+  end
+end

@@ -1,0 +1,70 @@
+name: Build Lazarus App
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        # os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v4
+
+    - name: Install Lazarus
+      uses: gcarreno/setup-lazarus@v3
+      with:
+        lazarus-version: stable
+
+    - name: Build Application
+      run: |
+        lazbuild -B SimLA.lpi
+
+    - name: Prepare Artifacts
+      shell: bash
+      run: |
+        mkdir artifact
+        if [ "${{ matrix.os }}" = "windows-latest" ]; then
+          cp bin/SimLA.exe artifact/SimLA.exe
+        # elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+        #   cp bin/SimLA artifact/SimLA-macos
+        else
+          cp bin/SimLA artifact/SimLA
+          # cp bin/SimLA artifact/SimLA-linux
+        fi
+
+    - name: Upload to Interim Storage
+      uses: actions/upload-artifact@v4
+      with:
+        name: binaries-${{ matrix.os }}
+        path: artifact/*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: ./release_files
+        pattern: binaries-*
+        merge-multiple: true
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: ./release_files/*
+        name: Release ${{ github.ref_name }}
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
