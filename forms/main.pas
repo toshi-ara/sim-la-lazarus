@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  ComCtrls, FPReadPNG,
+  ComCtrls, FPReadPNG, LclType,
   ConstValues, DrugParameters, LangText, Response, VariableTimerUnit, Version;
 
 const
@@ -172,11 +172,19 @@ end;
 
 
 procedure TForm1.PaintBox1Paint();
+var
+  DestRect: TRect;
 begin
   if Assigned(CurrentImage) and Assigned(CurrentImage.Graphic) then
-    PaintBox1.Canvas.Draw(0, 0, CurrentImage.Graphic);
-end;
+  begin
+    DestRect.Left := 0;
+    DestRect.Top := 0;
+    DestRect.Right := ScaleX(CurrentImage.Width, 96);
+    DestRect.Bottom := ScaleY(CurrentImage.Height, 96);
 
+    PaintBox1.Canvas.StretchDraw(DestRect, CurrentImage.Graphic);
+  end;
+end;
 
 
 //////////////////////////////////
@@ -314,11 +322,40 @@ procedure TForm1.PaintBox1MouseDown(Sender: TObject;
 var
   circle: Integer;
   ResponseNum: Integer;
+  ScaledWidth, ScaledHeight: Integer; // Drawing size after applying magnification
+  OriginalX, OriginalY: Integer;      // Original image coordinates after inverse scaling
 begin
   if not FTimer.Running then exit;
   if IsClick then exit;  { during responding image } 
 
-  circle := Response.GetCircleNumber(X, Y, ConstValues.Circles);
+  // --- Inverse coordinate transformation process based on screen zoom level ---
+  if Assigned(CurrentImage) and Assigned(CurrentImage.Graphic) then
+  begin
+    // Size of the (scaled) image currently displayed on the screen
+    ScaledWidth := ScaleX(CurrentImage.Width, 96);
+    ScaledHeight := ScaleY(CurrentImage.Height, 96);
+
+    // Prevent division by zero
+    if (ScaledWidth > 0) and (ScaledHeight > 0) then
+    begin
+      // Convert clicked screen coordinates (X, Y)
+      // to the coordinates of the original image size (100%)
+      OriginalX := MulDiv(X, CurrentImage.Width, ScaledWidth);
+      OriginalY := MulDiv(Y, CurrentImage.Height, ScaledHeight);
+    end
+    else
+    begin
+      OriginalX := X;
+      OriginalY := Y;
+    end;
+  end
+  else
+  begin
+    OriginalX := X;
+    OriginalY := Y;
+  end;
+
+  circle := Response.GetCircleNumber(OriginalX, OriginalY, ConstValues.Circles);
   if circle = -1 then exit;  { outside circles }
 
   IsResponse := IsRespond(circle);
