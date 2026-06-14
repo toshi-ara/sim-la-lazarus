@@ -90,6 +90,9 @@ A paper on the model formula and parameter values used in this simulator.
 
 
 ## ChangeLog
+### v1.0.1 (2026-6-15)
+- fix: Support DPI scaling
+
 ### v1.0.0 (2026-1-30)
 - Initial release
 - Build for Windows and Linux (Ubuntu)

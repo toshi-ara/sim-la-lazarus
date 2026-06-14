@@ -3,7 +3,7 @@ unit Version;
 interface
 
 const
-  Ver: String = '1.0.0';
+  Ver: String = '1.0.1';
 
 
 implementation
