@@ -179,8 +179,8 @@ begin
   begin
     DestRect.Left := 0;
     DestRect.Top := 0;
-    DestRect.Right := ScaleX(CurrentImage.Width, 96);
-    DestRect.Bottom := ScaleY(CurrentImage.Height, 96);
+    DestRect.Right := ScaleX(CurrentImage.Width, 96 * 2);
+    DestRect.Bottom := ScaleY(CurrentImage.Height, 96 * 2);
 
     PaintBox1.Canvas.StretchDraw(DestRect, CurrentImage.Graphic);
   end;
@@ -332,8 +332,8 @@ begin
   if Assigned(CurrentImage) and Assigned(CurrentImage.Graphic) then
   begin
     // Size of the (scaled) image currently displayed on the screen
-    ScaledWidth := ScaleX(CurrentImage.Width, 96);
-    ScaledHeight := ScaleY(CurrentImage.Height, 96);
+    ScaledWidth := ScaleX(CurrentImage.Width, 96 * 2);
+    ScaledHeight := ScaleY(CurrentImage.Height, 96 * 2);
 
     // Prevent division by zero
     if (ScaledWidth > 0) and (ScaledHeight > 0) then

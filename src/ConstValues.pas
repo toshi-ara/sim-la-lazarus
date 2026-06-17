@@ -13,17 +13,17 @@ type
 
 const
   Circles: TPositionArray = (
-   (272, 122), (342, 122), (412, 122),
-   (272, 178), (342, 178), (412, 178)
+   (545, 246), (685, 246), (825, 246),
+   (545, 358), (685, 358), (825, 358)
   );
-  RADIUS = 18;
+  RADIUS = 36;
 
   DrugName: array of String = (
-    'Saline', 
-    'Pro', 
-    'Lid', 
-    'Mep', 
-    'Bup', 
+    'Saline',
+    'Pro',
+    'Lid',
+    'Mep',
+    'Bup',
     'Lid + Adr'
   );
 
