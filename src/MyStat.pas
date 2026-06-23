@@ -4,7 +4,7 @@ unit MyStat;
 
 interface
 
-function NormalCDF(x: Double; upper: Boolean): Double;
+function NormalCDF(const x: Double; const upper: Boolean): Double;
 
 
 implementation
@@ -17,7 +17,7 @@ const
     Abramowitz and Stegun (1964) formula 7.1.26
     precision: abs(err) < 1.5e-7
 }
-function NormalCDF(x: Double; upper: Boolean): Double;
+function NormalCDF(const x: Double; const upper: Boolean): Double;
 const
    a1 =  0.254829592;
    a2 = -0.284496736;

@@ -11,23 +11,23 @@ type
   { TTimer }
   TVariableTimer = class
   private
-    FRunning: Boolean;
-    FLastTick: Int64;
-    FVirtual: Int64;
-    FSpeed: Double;
-    function GetNow: Int64;
+    _isRunning: Boolean;
+    _Speed: Double;
+    LastTime: Int64;   { last time of operation }
+    TotalElapsedTime: Int64;    { total elasped time }
+    function GetNow(): Int64;
   public
     constructor Create;
-    procedure Start;
-    procedure Pause;
-    procedure Reset;
-    procedure Update;
-    procedure ChangeSpeed(ANewSpeed: Double);
-    function GetMillis: Int64;
-    function GetSeconds: Double;
-    function GetMinutes: Double;
-    property Speed: Double read FSpeed write ChangeSpeed;
-    property Running: Boolean read FRunning;
+    procedure Start();
+    procedure Pause();
+    procedure Reset();
+    procedure Update();
+    procedure ChangeSpeed(const NewSpeed: Double);
+    function GetMillis(): Int64;
+    function GetSeconds(): Double;
+    function GetMinutes(): Double;
+    property isRunning: Boolean read _isRunning write _isRunning;
+    property Speed: Double read _Speed write ChangeSpeed;
   end;
 
 
@@ -36,78 +36,83 @@ implementation
 
 constructor TVariableTimer.Create;
 begin
-  Reset;
+  Reset();
 end;
 
-function TVariableTimer.GetNow: Int64;
+
+function TVariableTimer.GetNow(): Int64;
 begin
   Result := GetTickCount64;  { msec }
 end;
 
-procedure TVariableTimer.Start;
+
+procedure TVariableTimer.Start();
 begin
-  if not FRunning then
+  if not _isRunning then
   begin
-    FLastTick := GetNow;
-    FRunning := True;
+    LastTime := GetNow();
+    isRunning := True;
   end;
 end;
 
-procedure TVariableTimer.Pause;
+
+procedure TVariableTimer.Pause();
 begin
-  if FRunning then
+  if _isRunning then
   begin
-    Update;
-    FRunning := False;
+    Update();
+    isRunning := False;
   end;
 end;
 
-procedure TVariableTimer.Reset;
+
+procedure TVariableTimer.Reset();
 begin
-  FRunning := False;
-  FVirtual := 0;
-  FSpeed := 1.0;
+  _isRunning := False;
+  TotalElapsedTime := 0;
+  _Speed := 1.0;
 end;
 
-procedure TVariableTimer.Update;
+
+procedure TVariableTimer.Update();
 var
-  NowTick, Delta: Int64;
+  CurrentTime, Delta: Int64;
 begin
-  if not FRunning then Exit;
-
-  NowTick := GetNow;
-  Delta := NowTick - FLastTick;
-  FLastTick := NowTick;
-
-  FVirtual := FVirtual + Round(Delta * FSpeed);
-end;
-
-
-procedure TVariableTimer.ChangeSpeed(ANewSpeed: Double);
-begin
-  if FRunning then
+  if _isRunning then
   begin
-    Update;
-    FLastTick := GetNow;
+    CurrentTime := GetNow();
+    Delta := CurrentTime - LastTime;  { time elapsed since LastTime }
+    LastTime := CurrentTime;          { set new LastTime }
+
+    TotalElapsedTime := TotalElapsedTime + Round(Delta * _Speed);
   end;
-  FSpeed := ANewSpeed;
 end;
 
 
-function TVariableTimer.GetMillis: Int64;
+procedure TVariableTimer.ChangeSpeed(const NewSpeed: Double);
 begin
-  Result := FVirtual;
+  if _isRunning then
+  begin
+    Update();
+    LastTime := GetNow();
+  end;
+  _Speed := NewSpeed;
 end;
 
 
-function TVariableTimer.GetSeconds: Double;
+function TVariableTimer.GetMillis(): Int64;
 begin
-  Result := FVirtual / 1000.0;
+  Result := TotalElapsedTime;
 end;
 
-function TVariableTimer.GetMinutes: Double;
+function TVariableTimer.GetSeconds(): Double;
 begin
-  Result := FVirtual / 60000.0;
+  Result := TotalElapsedTime / 1000.0;
+end;
+
+function TVariableTimer.GetMinutes(): Double;
+begin
+  Result := TotalElapsedTime / 60000.0;
 end;
 
 end.

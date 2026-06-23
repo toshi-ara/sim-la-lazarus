@@ -11,12 +11,19 @@
       <XPManifest>
         <DpiAware Value="True"/>
       </XPManifest>
-      <Icon Value="0"/>
-      <Resources Count="2">
+      <Resources Count="6">
         <Resource_0 FileName="images/back1.png" Type="RCDATA" ResourceName="ANIMAL_IMAGE1"/>
         <Resource_1 FileName="images/back2.png" Type="RCDATA" ResourceName="ANIMAL_IMAGE2"/>
+        <Resource_2 FileName="locale/SimLA.en.po" Type="RCDATA" ResourceName="SIMLA_EN"/>
+        <Resource_3 FileName="locale/SimLA.ja.po" Type="RCDATA" ResourceName="SIMLA_JA"/>
+        <Resource_4 FileName="locale/SimLA.ko.po" Type="RCDATA" ResourceName="SIMLA_KO"/>
+        <Resource_5 FileName="locale/SimLA.zh_TW.po" Type="RCDATA" ResourceName="SIMLA_ZHTW"/>
       </Resources>
     </General>
+    <i18n>
+      <EnableI18N Value="True"/>
+      <OutDir Value="locale"/>
+    </i18n>
     <BuildModes>
       <Item Name="Default" Default="True"/>
     </BuildModes>
@@ -38,17 +45,12 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="main.pas"/>
+        <Filename Value="forms/main.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Main"/>
-      </Unit>
-      <Unit>
-        <Filename Value="timeunit.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="TimeUnit"/>
       </Unit>
     </Units>
   </ProjectOptions>

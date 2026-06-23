@@ -20,8 +20,8 @@ type
     function RotL(x: QWord; k: Integer): QWord;
   public
     constructor Create(seed: QWord);
-    function NextUInt64: QWord;
-    function NextDouble: Double;
+    function NextUInt64(): QWord;
+    function NextDouble(): Double;
   end;
 
 
@@ -59,7 +59,7 @@ begin
 end;
 
 
-function TXoshiro256SS.NextUInt64: QWord;
+function TXoshiro256SS.NextUInt64(): QWord;
 var
   t: QWord;
 begin
@@ -77,7 +77,7 @@ begin
 end;
 
 
-function TXoshiro256SS.NextDouble: Double;
+function TXoshiro256SS.NextDouble(): Double;
 begin
   Result := (NextUInt64 shr 11) * (1.0 / 9007199254740992.0);
 end;

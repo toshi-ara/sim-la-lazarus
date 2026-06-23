@@ -1,0 +1,59 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: MultiLang.rsButtonNewExp
+msgid "New Exp"
+msgstr "New Exp"
+
+#: MultiLang.rsButtonPause
+msgid "Pause"
+msgstr "Pause"
+
+#: MultiLang.rsButtonQuit
+msgid "Quit"
+msgstr "Quit"
+
+#: MultiLang.rsButtonRestart
+msgid "Restart"
+msgstr "Restart"
+
+#: MultiLang.rsButtonSave
+msgid "Save"
+msgstr "Save"
+
+#: MultiLang.rsButtonStart
+msgid "Start"
+msgstr "Start"
+
+#: MultiLang.rsLabelSpeed
+msgid "Speed"
+msgstr "Speed"
+
+#: MultiLang.rsLabelResponsePlus
+msgid "Respond"
+msgstr "Respond"
+
+#: MultiLang.rsLabelResponseMinus
+msgid "Not Respond"
+msgstr "Not Respond"
+
+#: MultiLang.rsMsgNewExp
+msgid "Do you want to start a new experiment?"
+msgstr "Do you want to start a new experiment?"
+
+#: MultiLang.rsMsgQuit
+msgid "Do you want to quit?"
+msgstr "Do you want to quit?"
+
+#: MultiLang.rsLabelConfirm
+msgid "Confirm"
+msgstr "Confirm"
+
+#: lclstrconsts.rsmbyes
+msgid "&Yes"
+msgstr "Yes"
+
+#: lclstrconsts.rsmbno
+msgid "&No"
+msgstr "No"
+

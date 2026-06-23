@@ -27,6 +27,8 @@ const
     'Lid + Adr'
   );
 
+  SliderSpeedMin = 1;
+  SliderSpeedMax = 10;
 
 implementation
 
