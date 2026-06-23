@@ -90,6 +90,10 @@ A paper on the model formula and parameter values used in this simulator.
 
 
 ## ChangeLog
+### v1.0.2 (2026-6-23)
+- Multilingual support using .po files
+- Refactoring
+
 ### v1.0.1 (2026-6-15)
 - fix: Support DPI scaling
 
