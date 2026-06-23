@@ -54,9 +54,9 @@ function TMultivariateNormal.RandNormal: Double;
 var
   u1, u2: Double;
 begin
-  u1 := FRng.NextDouble;
+  u1 := FRng.NextDouble();
   if u1 = 0.0 then u1 := 1e-16;
-  u2 := FRng.NextDouble;
+  u2 := FRng.NextDouble();
   Result := Sqrt(-2.0 * Ln(u1)) * Cos(2.0 * Pi * u2);
 end;
 

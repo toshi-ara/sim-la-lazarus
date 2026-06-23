@@ -24,13 +24,13 @@ object Form1: TForm1
     ParentColor = False
     TabOrder = 0
     object LabelTimer: TLabel
-      Left = 20
-      Height = 48
-      Top = 290
-      Width = 200
+      Left = 36
+      Height = 50
+      Top = 288
+      Width = 168
       Alignment = taCenter
-      AutoSize = False
       Caption = '0:00:00'
+      Constraints.MinHeight = 50
       Font.Height = -48
       Font.Name = 'Monospace'
       ParentFont = False
@@ -73,13 +73,13 @@ object Form1: TForm1
       OnClick = ButtonQuitClick
     end
     object LabelResult: TLabel
-      Left = 20
-      Height = 33
+      Left = 50
+      Height = 40
       Top = 360
-      Width = 200
+      Width = 140
       Alignment = taCenter
-      AutoSize = False
       Caption = 'Response'
+      Constraints.MinHeight = 40
       Font.Height = -32
       Font.Name = 'Sans Serif'
       ParentFont = False
@@ -139,19 +139,10 @@ object Form1: TForm1
       Height = 36
       Top = 40
       Width = 400
-      Position = 7
+      Position = 1
       OnChange = SliderSpeedChange
       ParentColor = False
       TabOrder = 0
-    end
-    object Panel1: TPanel
-      Left = 0
-      Height = 50
-      Top = 112
-      Width = 170
-      Caption = 'Panel1'
-      ParentBackground = False
-      TabOrder = 1
     end
   end
   object PanelImage: TPanel

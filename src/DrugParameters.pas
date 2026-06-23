@@ -1,3 +1,16 @@
+{
+  Parameters of this simulator are used in the below manuscript.
+  - Table 2 and Table 3 (without outlier)
+
+  Ara T, Kitamura H. 
+  Improvement of Statistical Models
+   by Considering Correlations among Parameters:
+   Local Anesthetic Agent Simulator for Pharmacological Education.
+  BioMedInformatics. 2024; 4(4):2133-2148.
+  https://doi.org/10.3390/biomedinformatics4040114
+}
+
+
 unit DrugParameters;
 
 {$mode objfpc}{$H+}
@@ -16,7 +29,6 @@ type
 
 var
   Params: TParamArray;
-  Cov: TMatrix;  { Covariance Matrix for drug parameters }
 
 procedure SetParameters(var P: TParamArray);
 
@@ -27,6 +39,9 @@ type
   { drug parameter (population) }
   TParam0 = array[0..1] of Double;     { [Mean, SD] }
   TParam0Array = array[0..3] of TParam0;
+
+var
+  Cov: TMatrix = nil;  { Covariance Matrix for drug parameters }
 
 const
   { Pro, Lid, Mep, Bup }

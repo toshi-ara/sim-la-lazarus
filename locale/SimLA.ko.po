@@ -1,0 +1,59 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+#: MultiLang.rsButtonNewExp
+msgid "New Exp"
+msgstr "새로운 실험"
+
+#: MultiLang.rsButtonPause
+msgid "Pause"
+msgstr "일시적인 중지"
+
+#: MultiLang.rsButtonQuit
+msgid "Quit"
+msgstr "사람을 떠나다"
+
+#: MultiLang.rsButtonRestart
+msgid "Restart"
+msgstr "재시작"
+
+#: MultiLang.rsButtonSave
+msgid "Save"
+msgstr "구하다"
+
+#: MultiLang.rsButtonStart
+msgid "Start"
+msgstr "시작"
+
+#: MultiLang.rsLabelSpeed
+msgid "Speed"
+msgstr "속도"
+
+#: MultiLang.rsLabelResponsePlus
+msgid "Respond"
+msgstr "반응 있음"
+
+#: MultiLang.rsLabelResponseMinus
+msgid "Not Respond"
+msgstr "반응 없음"
+
+#: MultiLang.rsMsgNewExp
+msgid "Do you want to start a new experiment?"
+msgstr "새로운 실험을 시작해 보시겠어요?"
+
+#: MultiLang.rsMsgQuit
+msgid "Do you want to quit?"
+msgstr "그만두고 싶으세요?"
+
+#: MultiLang.rsLabelConfirm
+msgid "Confirm"
+msgstr "확인하다"
+
+#: lclstrconsts.rsmbyes
+msgid "&Yes"
+msgstr "예 (&Y)"
+
+#: lclstrconsts.rsmbno
+msgid "&No"
+msgstr "아니오 (&N)"
+

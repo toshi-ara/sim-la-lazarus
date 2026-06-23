@@ -1,0 +1,42 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: tform1.buttonnewexp.caption
+msgid "NewExp"
+msgstr ""
+
+#: tform1.buttonquit.caption
+msgctxt "tform1.buttonquit.caption"
+msgid "Quit"
+msgstr ""
+
+#: tform1.buttonsave.caption
+msgctxt "tform1.buttonsave.caption"
+msgid "Save"
+msgstr ""
+
+#: tform1.buttonstart.caption
+msgctxt "tform1.buttonstart.caption"
+msgid "Start"
+msgstr ""
+
+#: tform1.comboboxlang.text
+msgid "ComboBoxLang"
+msgstr ""
+
+#: tform1.labelresult.caption
+msgid "Response"
+msgstr ""
+
+#: tform1.labelspeed.caption
+msgid "Speed"
+msgstr ""
+
+#: tform1.labeltimer.caption
+msgid "0:00:00"
+msgstr ""
+
+#: tform1.panel1.caption
+msgid "Panel1"
+msgstr ""
+

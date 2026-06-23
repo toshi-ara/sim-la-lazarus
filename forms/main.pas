@@ -6,15 +6,17 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  ComCtrls, FPReadPNG, LclType,
-  ConstValues, DrugParameters, LangText, Response, VariableTimerUnit, Version;
+  ComCtrls, FPReadPNG, LClType, LCLTranslator,
+  ConstValues, DrugParameters, Misc, MultiLang, Response,
+  VariableTimerUnit, Version;
 
 const
   IntervalResponse = 300;  { duration to show response (msec) }
-  CounterInitial = 1000;
+  CounterInitial = 1000;   { for data save }
   CounterIncrease = 500;
 
 type
+  { type for data save }
   TResult = record
     Time: Double;
     Drug: String;
@@ -23,6 +25,10 @@ type
 
   { TForm1 }
   TForm1 = class(TForm)
+    PanelLeft: TPanel;
+    PanelSpeed: TPanel;
+    PanelImage: TPanel;
+
     ButtonNewExp: TButton;
     ButtonStart: TButton;
     ButtonSave: TButton;
@@ -32,14 +38,12 @@ type
     LabelResult: TLabel;
     LabelSpeed: TLabel;
     LabelTimer: TLabel;
-    Panel1: TPanel;
-    PanelImage: TPanel;
-    PanelLeft: TPanel;
-    PanelSpeed: TPanel;
+    SliderSpeed: TTrackBar;
+
     SaveDialog1: TSaveDialog;
     Timer1: TTimer;
     VariableTimer: TTimer;
-    SliderSpeed: TTrackBar;
+
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormDestroy();
@@ -48,31 +52,32 @@ type
     procedure ButtonStartClick();
     procedure ButtonQuitClick();
     procedure ButtonSaveClick();
+    procedure SliderSpeedChange();
+
     procedure PaintBox1Paint();
     procedure PaintBox1MouseDown(Sender: TObject;
       Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-    procedure SliderSpeedChange();
+
     procedure Timer1Timer();
     procedure VariableTimerTimer();
+
     function ConfirmQuit(): Boolean;
-    function IsRespond(site: Integer): Boolean;
+    function IsRespond(drugType: Integer): Boolean;
 
   private
     FTimer: TVariableTimer;
-    SelectedLang: TLang;
     IsClick: Boolean;  { for Timer }
     IsReset: Boolean;  { for Start / Restart }
-    ResultArray: array of TResult;  { save results }
+
+    { data retention }
+    ResultArray: array of TResult;
     CounterResult: Integer;
     CounterLimit: Integer;
+
+    procedure SaveResourceToFile(const ResourceName: String; const TargetPath: String);
+    procedure SetLocale();
     procedure Initialize();
-
-  public
-
   end;
-
-  { independent to GUI }
-  function SecondsToHMS(TotalSeconds: Double): String;
 
 var
   Form1: TForm1;
@@ -89,12 +94,15 @@ var
   CurrentImage: TPicture;
 
 
-
 //////////////////////////////////
 // Start / Initialize
 //////////////////////////////////
 
 procedure TForm1.FormCreate(Sender: TObject);
+var
+  EnvLang: String;
+  Index: Integer;
+  Info: TLangInfo;
 begin
   { Title }
   Self.Caption := 'Simulator of Local Anesthetics (version ' + Ver + ')';
@@ -102,55 +110,70 @@ begin
   { Timer }
   FTimer := TVariableTimer.Create;
 
-  { images }
+  { load images from Resource }
   DoubleBuffered := True;
   ImageBack1 := TPicture.Create;
   ImageBack2 := TPicture.Create;
   ImageBack1.LoadFromResourceName(HInstance, 'ANIMAL_IMAGE1');
   ImageBack2.LoadFromResourceName(HInstance, 'ANIMAL_IMAGE2');
 
-  { current image }
+  { set current image }
   CurrentImage := ImageBack1;
   PaintBox1.Invalidate;
 
-  { ComboBox for language selection }
+  { get current Locale in environment variable `LANG` }
+  EnvLang := Misc.GetEnvironmentLANG();
+
+  { set initial index of ComboBox }
+  Index := 0;
+  for Info in LangInfoData do
+  begin
+    if Info.Lang = EnvLang then Break;
+    Index := Index + 1;
+  end;
+  if Index > High(LangInfoData) then Index := 0; { fallback to en_US }
+
+  { set ComboBox for language selection }
   ComboBoxLang.Items.Clear;
-  ComboBoxLang.Items.AddObject('English', TObject(langEN));
-  ComboBoxLang.Items.AddObject('日本語 (Japanese)', TObject(langJP));
-  ComboBoxLang.Items.AddObject('中文（繁体）', TObject(langZHTW));
-  // initial setting
-  ComboBoxLang.ItemIndex := 0;  { English }
-  SelectedLang := TLang(PtrInt(ComboBoxLang.Items.Objects[ComboBoxLang.ItemIndex]));
+  for Info in LangInfoData do
+  begin
+    ComboBoxLang.Items.Add(Info.DisplayStr);
+  end;
+
+  ComboBoxLang.ItemIndex := Index;
+
+  SetLocale();
 
   { Slider }
-  SliderSpeed.Min := 1;
-  SliderSpeed.Max := 10;
+  SliderSpeed.Min := SliderSpeedMin;
+  SliderSpeed.Max := SliderSpeedMax;
 
+  { Array for preservetion of results}
   SetLength(ResultArray, 0);
 
   Initialize();
 end;
 
 
+{ called at first and at new experiment}
 procedure TForm1.Initialize();
 begin
   SetParameters(Params);
 
   FTimer.Reset;
-  FTimer.ChangeSpeed(1);
-  SliderSpeed.Position := 1;
+  FTimer.ChangeSpeed(SliderSpeedMin);
+  SliderSpeed.Position := SliderSpeedMin;
   Timer1.Interval := IntervalResponse;
 
-  ButtonNewExp.Caption := GetText(Text_ButtonNewExp, SelectedLang);
-  ButtonStart.Caption := GetText(Text_ButtonStart, SelectedLang);
-  ButtonSave.Caption := GetText(Text_ButtonSave, SelectedLang);
-  ButtonQuit.Caption := GetText(Text_ButtonQuit, SelectedLang);
+  ButtonNewExp.Caption := rsButtonNewExp;
+  ButtonStart.Caption := rsButtonStart;
+  ButtonSave.Caption := rsButtonSave;
+  ButtonQuit.Caption := rsButtonQuit;
   ButtonStart.Enabled := True;
   ButtonNewExp.Enabled := True;
   ButtonQuit.Enabled := True;
 
-  LabelSpeed.Caption := Format('%s (x %d)',
-    [GetText(Text_LabelSpeed, SelectedLang), SliderSpeed.Position]);
+  LabelSpeed.Caption := Format('%s (x %d)', [rsLabelSpeed, SliderSpeed.Position]);
 
   LabelResult.Caption := '';
 
@@ -171,6 +194,7 @@ begin
 end;
 
 
+{ draw CurrentImage to PaintBox1 }
 procedure TForm1.PaintBox1Paint();
 var
   DestRect: TRect;
@@ -193,12 +217,8 @@ end;
 { NewExp }
 procedure TForm1.ButtonNewExpClick();
 begin
-  if QuestionDlg(GetText(Text_LabelConfirm, SelectedLang),
-                 GetText(Text_MsgNewExp, SelectedLang),
-                 mtConfirmation,
-                 [mrOk, GetText(Text_LabelYes, SelectedLang),
-                  mrCancel, GetText(Text_LabelNo, SelectedLang),
-                  'IsDefault'], 0) = mrOk then
+  if MessageDlg(rsLabelConfirm, rsMsgNewExp, mtConfirmation,
+                [mbYes, mbNo], 0) = mrYes then
   begin
     Initialize();
   end;
@@ -208,10 +228,11 @@ end;
 { Start / Stop / Restart }
 procedure TForm1.ButtonStartClick();
 begin
-  if (FTimer.Running) then
+  if (FTimer.isRunning) then
   begin
     FTimer.Pause;
-    ButtonStart.Caption := GetText(Text_ButtonRestart, SelectedLang);
+    ButtonStart.Caption := rsButtonRestart;
+    { enable buttons }
     ButtonNewExp.Enabled := True;
     ButtonQuit.Enabled := True;
     ButtonSave.Enabled := True;
@@ -221,7 +242,8 @@ begin
   begin
     IsReset := False;
     FTimer.Start;
-    ButtonStart.Caption := GetText(Text_ButtonPause, SelectedLang);
+    ButtonStart.Caption := rsButtonPause;
+    { disable buttons }
     ButtonNewExp.Enabled := False;
     ButtonQuit.Enabled := False;
     ButtonSave.Enabled := False;
@@ -233,12 +255,9 @@ end;
 { Quit }
 function TForm1.ConfirmQuit: Boolean;
 begin
-  Result := QuestionDlg(GetText(Text_LabelConfirm, SelectedLang),
-                        GetText(Text_MsgQuit, SelectedLang),
-                        mtConfirmation, 
-                        [mrOk, GetText(Text_LabelYes, SelectedLang),
-                         mrCancel, GetText(Text_LabelNo, SelectedLang),
-                         'IsDefault'], 0) = mrOk;
+  Result := MessageDlg(rsLabelConfirm, rsMsgQuit, mtConfirmation,
+                       [mbYes, mbNo], 0) = mrYes;
+
 end;
 
 procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -252,12 +271,13 @@ begin
 end;
 
 
-{ Save Log }
+{ Save data as CSV }
 procedure TForm1.ButtonSaveClick();
 var
   i: Integer;
-  SL: TStringList;
+  SL: TStringList;  { text data for CSV file }
 begin
+  { setting for save dialog }
   with SaveDialog1 do
   begin
     Filter := 'CSV files (*.csv)|*.csv|All files (*.*)|*.*';
@@ -269,18 +289,19 @@ begin
   begin
     SL := TStringList.Create;
     try
-      { header }
+      { write header }
       SL.Add('Time, Drug, Response');
 
-      { data }
+      { write data: comma-separeted }
       for i:= 0 to CounterResult - 1 do
       begin
         SL.Add(Format('%.1f, %s, %d',
             [ResultArray[i].Time, ResultArray[i].Drug, ResultArray[i].Response]));
       end;
 
-      { save as CSV }
+      { save data to file as UTF-8 }
       SL.SaveToFile(SaveDialog1.FileName, TEncoding.UTF8);
+
     finally
       SL.Free;
     end;
@@ -292,13 +313,13 @@ end;
 //////////////////////////////////
 // Slider / Timer
 //////////////////////////////////
+
 procedure TForm1.SliderSpeedChange();
 begin
   if Assigned(FTimer) then
   begin
     FTimer.ChangeSpeed(SliderSpeed.Position);
-    LabelSpeed.Caption := Format('%s (x %d)',
-      [GetText(Text_LabelSpeed, SelectedLang), SliderSpeed.Position]);
+    LabelSpeed.Caption := Format('%s (x %d)', [rsLabelSpeed, SliderSpeed.Position]);
   end;
 end;
 
@@ -307,7 +328,7 @@ begin
   if Assigned(FTimer) then
   begin
     FTimer.Update;
-    LabelTimer.Caption := SecondsToHMS(FTimer.GetSeconds);
+    LabelTimer.Caption := Misc.SecondsToHMS(FTimer.GetSeconds);
   end;
 end;
 
@@ -320,26 +341,26 @@ end;
 procedure TForm1.PaintBox1MouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
-  circle: Integer;
+  drugType: Integer;
   ResponseNum: Integer;
   ScaledWidth, ScaledHeight: Integer; // Drawing size after applying magnification
   OriginalX, OriginalY: Integer;      // Original image coordinates after inverse scaling
 begin
-  if not FTimer.Running then exit;
-  if IsClick then exit;  { during responding image } 
+  if not FTimer.isRunning then exit;
+  if IsClick then exit;  { during responding image }
 
-  // --- Inverse coordinate transformation process based on screen zoom level ---
+  { Inverse coordinate transformation process based on screen zoom level }
   if Assigned(CurrentImage) and Assigned(CurrentImage.Graphic) then
   begin
-    // Size of the (scaled) image currently displayed on the screen
+    { Size of the (scaled) image currently displayed on the screen }
     ScaledWidth := ScaleX(CurrentImage.Width, 96 * 2);
     ScaledHeight := ScaleY(CurrentImage.Height, 96 * 2);
 
-    // Prevent division by zero
+    { Prevent division by zero }
     if (ScaledWidth > 0) and (ScaledHeight > 0) then
     begin
-      // Convert clicked screen coordinates (X, Y)
-      // to the coordinates of the original image size (100%)
+      { Convert clicked screen coordinates (X, Y)
+        to the coordinates of the original image size (100%) }
       OriginalX := MulDiv(X, CurrentImage.Width, ScaledWidth);
       OriginalY := MulDiv(Y, CurrentImage.Height, ScaledHeight);
     end
@@ -355,15 +376,15 @@ begin
     OriginalY := Y;
   end;
 
-  circle := Response.GetCircleNumber(OriginalX, OriginalY, ConstValues.Circles);
-  if circle = -1 then exit;  { outside circles }
+  drugType := Response.GetCircleNumber(OriginalX, OriginalY, ConstValues.Circles);
+  if drugType = -1 then exit;  { outside circles }
 
-  IsResponse := IsRespond(circle);
+  IsResponse := IsRespond(drugType);
 
-  { save data }
-  if IsRespond(circle) then ResponseNum := 1 else ResponseNum := 0;
+  { save data to ResultArray }
+  if IsRespond(drugType) then ResponseNum := 1 else ResponseNum := 0;
   ResultArray[CounterResult].Time := FTimer.GetMinutes();
-  ResultArray[CounterResult].Drug := DrugName[circle];
+  ResultArray[CounterResult].Drug := DrugName[drugType];
   ResultArray[CounterResult].Response := ResponseNum;
 
   CounterResult := CounterResult + 1;
@@ -375,18 +396,17 @@ begin
 
   if IsResponse then
   begin
-    CurrentImage := ImageBack2;     // change image
-    PaintBox1.Invalidate;           // redraw
+    { change image and redraw }
+    CurrentImage := ImageBack2;
+    PaintBox1.Invalidate;
 
     LabelTimer.Font.Color := clRed;
     LabelResult.Font.Color := clRed;
-    LabelResult.Caption :=
-      GetText(Text_LabelResponsePlus, SelectedLang);
+    LabelResult.Caption := rsLabelResponsePlus;
   end
   else
   begin
-    LabelResult.Caption :=
-      GetText(Text_LabelResponseMinus, SelectedLang);
+    LabelResult.Caption := rsLabelResponseMinus;
   end;
 
   IsClick := True;
@@ -396,8 +416,9 @@ end;
 
 procedure TForm1.Timer1Timer();
 begin
-  if not FTimer.Running then exit;
+  if not FTimer.isRunning then exit;
 
+  { revert image and redraw }
   CurrentImage := ImageBack1;
   PaintBox1.Invalidate;
 
@@ -410,12 +431,12 @@ begin
 end;
 
 
-function TForm1.IsRespond(site: Integer): Boolean;
+function TForm1.IsRespond(drugType: Integer): Boolean;
 var
   time, prob: Double;
 begin
   time := FTimer.GetSeconds() / 60.0;  { convert to minute }
-  prob := Response.GetProbability(time, site, Params);
+  prob := Response.GetProbability(time, drugType, Params);
   Result := Random() <= prob;
 end;
 
@@ -427,38 +448,79 @@ end;
 
 procedure TForm1.ComboBoxLangChange();
 begin
-  SelectedLang := TLang(PtrInt(ComboBoxLang.Items.Objects[ComboBoxLang.ItemIndex]));
+  SetLocale();
 
   if IsReset then
-  begin
-    ButtonStart.Caption := GetText(Text_ButtonStart, SelectedLang);
-  end
+    ButtonStart.Caption := rsButtonStart
   else
-  begin
-    ButtonStart.Caption := GetText(Text_ButtonRestart, SelectedLang);
-  end;
-  ButtonNewExp.Caption := GetText(Text_ButtonNewExp, SelectedLang);
-  ButtonSave.Caption := GetText(Text_ButtonSave, SelectedLang);
-  ButtonQuit.Caption := GetText(Text_ButtonQuit, SelectedLang);
+    ButtonStart.Caption := rsButtonRestart;
 
-  LabelSpeed.Caption := Format('%s (x %d)',
-    [GetText(Text_LabelSpeed, SelectedLang), SliderSpeed.Position]);
+  ButtonNewExp.Caption := rsButtonNewExp;
+  ButtonSave.Caption := rsButtonSave;
+  ButtonQuit.Caption := rsButtonQuit;
+
+  LabelSpeed.Caption := Format('%s (x %d)', [rsLabelSpeed, SliderSpeed.Position]);
 end;
 
 
 
 //////////////////////////////////
-// Independent to GUI
+// output po file from resource
 //////////////////////////////////
 
-function SecondsToHMS(TotalSeconds: Double): String;
+procedure TForm1.SaveResourceToFile(const ResourceName: String; const TargetPath: String);
 var
-  H, M, S: Integer;
+  ResStream: TResourceStream;
+  FileStream: TFileStream;
 begin
-  H := Trunc(TotalSeconds) div 3600;
-  M := (Trunc(TotalSeconds) mod 3600) div 60;
-  S := Trunc(TotalSeconds) mod 60;
-  Result := Format('%d:%.2d:%.2d', [H, M, S]);
+  try
+    ResStream := TResourceStream.Create(HInstance, ResourceName, RT_RCDATA);
+    try
+      FileStream := TFileStream.Create(TargetPath, fmCreate);
+      try
+        FileStream.CopyFrom(ResStream, ResStream.Size);
+      finally
+        FileStream.Free;
+      end;
+    finally
+      ResStream.Free;
+    end;
+  except
+    on EResNotFound do ;
+  end;
+end;
+
+
+//////////////////////////////////
+// Set locale using SelectedLang
+//////////////////////////////////
+
+procedure TForm1.SetLocale();
+var
+  Index: Integer;
+  Info: TLangInfo;
+  AppDir, TargetPoName, TargetResName, FullPoPath: String;
+begin
+  Index := ComboBoxLang.ItemIndex;
+  if Index < 0 then Index := 0;  { unselected -> select first item }
+
+  Info := LangInfoData[Index];
+  TargetResName := Info.ResourceName;
+  TargetPoName  := Info.PoFileName;
+
+  if (TargetResName <> '') and (TargetPoName <> '') then
+  begin
+    AppDir := ExtractFilePath(ParamStr(0));
+    FullPoPath := AppDir + TargetPoName;
+
+    try
+      SaveResourceToFile(TargetResName, FullPoPath); { outpot po file }
+      SetDefaultLang(Info.Lang);
+    finally
+      { delete po file }
+      if FileExists(FullPoPath) then DeleteFile(FullPoPath);
+    end;
+  end
 end;
 
 end.

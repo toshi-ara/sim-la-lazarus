@@ -1,0 +1,59 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: MultiLang.rsButtonNewExp
+msgid "New Exp"
+msgstr "新規實驗"
+
+#: MultiLang.rsButtonPause
+msgid "Pause"
+msgstr "一時停止"
+
+#: MultiLang.rsButtonQuit
+msgid "Quit"
+msgstr "終了"
+
+#: MultiLang.rsButtonRestart
+msgid "Restart"
+msgstr "再開"
+
+#: MultiLang.rsButtonSave
+msgid "Save"
+msgstr "保存"
+
+#: MultiLang.rsButtonStart
+msgid "Start"
+msgstr "開始"
+
+#: MultiLang.rsLabelSpeed
+msgid "Speed"
+msgstr "速度"
+
+#: MultiLang.rsLabelResponsePlus
+msgid "Respond"
+msgstr "有反應"
+
+#: MultiLang.rsLabelResponseMinus
+msgid "Not Respond"
+msgstr "沒反應"
+
+#: MultiLang.rsMsgNewExp
+msgid "Do you want to start a new experiment?"
+msgstr "要開始新的實驗嗎?'"
+
+#: MultiLang.rsMsgQuit
+msgid "Do you want to quit?"
+msgstr "確定要退出嗎?"
+
+#: MultiLang.rsLabelConfirm
+msgid "Confirm"
+msgstr "確認"
+
+#: lclstrconsts.rsmbyes
+msgid "&Yes"
+msgstr "是(&Y)"
+
+#: lclstrconsts.rsmbno
+msgid "&No"
+msgstr "否(&N)"
+
