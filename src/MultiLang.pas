@@ -40,7 +40,7 @@ const
 
 
 resourcestring
-  rsButtonNewExp = 'New Exp';
+  rsButtonNewExp = 'NewExp';
   rsButtonStart = 'Start';
   rsButtonRestart = 'Restart';
   rsButtonPause = 'Pause';
@@ -49,10 +49,10 @@ resourcestring
 
   rsLabelSpeed = 'Speed';
   rsLabelResponsePlus = 'Respond';
-  rsLabelResponseMinus = 'Not Respond';
+  rsLabelResponseMinus = 'NotRespond';
 
-  rsMsgNewExp = 'Do you want to start a new experiment?';
-  rsMsgQuit = 'Do you want to quit?';
+  rsMsgNewExp = 'dialogMsgNewExp';
+  rsMsgQuit = 'dialogMsgQuit';
   rsLabelConfirm = 'Confirm';
 
 
