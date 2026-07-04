@@ -2,7 +2,7 @@ msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
 #: MultiLang.rsButtonNewExp
-msgid "New Exp"
+msgid "NewExp"
 msgstr "新規實驗"
 
 #: MultiLang.rsButtonPause
@@ -34,15 +34,15 @@ msgid "Respond"
 msgstr "有反應"
 
 #: MultiLang.rsLabelResponseMinus
-msgid "Not Respond"
+msgid "NotRespond"
 msgstr "沒反應"
 
 #: MultiLang.rsMsgNewExp
-msgid "Do you want to start a new experiment?"
+msgid "dialogMsgNewExp"
 msgstr "要開始新的實驗嗎?'"
 
 #: MultiLang.rsMsgQuit
-msgid "Do you want to quit?"
+msgid "dialogMsgQuit"
 msgstr "確定要退出嗎?"
 
 #: MultiLang.rsLabelConfirm

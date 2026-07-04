@@ -8,28 +8,36 @@ uses
   math,
   ConstValues, DrugParameters, MyStat;
 
+function IsInCircle(const X: Integer; const Y: Integer;
+                    const Circle: TPosition; r: Integer): Boolean;
 function GetCircleNumber(const X: Integer; const Y: Integer;
-                         const Circles: TPositionArray): Integer;
+                         const Circles: TPositionArray; const r: Integer): Integer;
 function GetProbability(const time: Double;
                         const drugType: Integer;
                         const params: TParamArray): Double;
-
-
 
 implementation
 
 const
   ProbThreshold = 0.05;  { threshold of probability not to respond }
 
+
+function IsInCircle(const X: Integer; const Y: Integer;
+                    const Circle: TPosition; r: Integer): Boolean;
+begin
+  Result := (X - Circle[0])**2 + (Y - Circle[1])**2 <= r**2
+end;
+
+
 function GetCircleNumber(const X: Integer; const Y: Integer;
-                         const Circles: TPositionArray): Integer;
+                         const Circles: TPositionArray; const r: Integer): Integer;
 var
   i, number: Integer;
 begin
   number := -1;
   for i := 0 to High(Circles) do
   begin
-    if (X - Circles[i][0])**2 + (Y - Circles[i][1])**2 <= RADIUS**2 then
+    if IsInCircle(X, Y, Circles[i], r) then
     begin
       number := i;
       break;

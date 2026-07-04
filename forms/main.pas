@@ -376,7 +376,9 @@ begin
     OriginalY := Y;
   end;
 
-  drugType := Response.GetCircleNumber(OriginalX, OriginalY, ConstValues.Circles);
+  drugType := Response.GetCircleNumber(OriginalX, OriginalY,
+                                       ConstValues.Circles,
+                                       ConstValues.RADIUS);
   if drugType = -1 then exit;  { outside circles }
 
   IsResponse := IsRespond(drugType);
