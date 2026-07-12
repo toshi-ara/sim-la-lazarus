@@ -62,7 +62,7 @@
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
       <Libraries Value="$(ProjPath)/forms"/>
-      <OtherUnitFiles Value="$(ProjPath)/src;$(ProjPath)/forms"/>
+      <OtherUnitFiles Value="$(ProjPath)/forms;$(ProjPath)/src;$(ProjPath)/library"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>
