@@ -43,6 +43,9 @@
 1. You can run the experiment from the beginning with new parameter values
     by pressing the **New Exp.** button.
     - This means conducting experiments using different animals.
+1. You can save the timestamp of the click, the drug,
+    and the presence or absence of a reaction as an XLSX or CSV file
+    by pressing the **Save** button.
 1. Press the **Quit** button and then exit the program.
     - Please perform this operation to delete the parameter information
       because this remains in the browser,
@@ -90,6 +93,9 @@ A paper on the model formula and parameter values used in this simulator.
 
 
 ## ChangeLog
+### v1.1.0 (2026-8-5)
+- enable to save results as Excel file (.xlsx)
+
 ### v1.0.2 (2026-6-23)
 - Multilingual support using .po files
 - Refactoring
