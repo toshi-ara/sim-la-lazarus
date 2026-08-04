@@ -60,9 +60,9 @@
       <Filename Value="$(ProjPath)/bin/SimLA"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir)"/>
+      <IncludeFiles Value="$(ProjOutDir);$(ProjPath)/library/FPSpreadsheet"/>
       <Libraries Value="$(ProjPath)/forms"/>
-      <OtherUnitFiles Value="$(ProjPath)/forms;$(ProjPath)/src;$(ProjPath)/library"/>
+      <OtherUnitFiles Value="$(ProjPath)/forms;$(ProjPath)/src;$(ProjPath)/library;$(ProjPath)/library/FPSpreadsheet/common"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>

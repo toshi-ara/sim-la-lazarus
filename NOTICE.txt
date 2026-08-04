@@ -1,0 +1,26 @@
+========================================================================
+THIRD-PARTY SOFTWARE NOTICE
+========================================================================
+
+This software includes the following third-party library:
+
+------------------------------------------------------------------------
+FPSpreadSheet
+------------------------------------------------------------------------
+Copyright (c) FPSpreadSheet Contributors / Lazarus CCR
+
+License: 
+  GNU Lesser General Public License (LGPL) v2.1 or later with FPC modified
+  LGPL static linking exception (the same license as used in the Lazarus 
+  Component Library / LCL).
+
+Source Code:
+  The original, unmodified source code of FPSpreadSheet is available at:
+  https://sourceforge.net/projects/lazarus-ccr/files/FPSpreadsheet/fpspreadsheet-2.0.0.zip/download
+
+License Details:
+  For the full terms and conditions, including the LGPL v2.1 text and 
+  the static linking exception clause, please see the accompanying 
+  LICENSE-LGPL.txt file.
+
+========================================================================

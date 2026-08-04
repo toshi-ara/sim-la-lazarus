@@ -7,6 +7,8 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
   ComCtrls, FPReadPNG, LClType, LCLTranslator,
+  fpspreadsheet, fpstypes,
+  xlsxooxml,  // unit for OOXML (.xlsx) (v2.0.0)
   ConstValues, DrugParameters, Misc, MultiLang, Response,
   VariableTimerUnit, Version;
 
@@ -77,6 +79,9 @@ type
     procedure SaveResourceToFile(const ResourceName: String; const TargetPath: String);
     procedure SetLocale();
     procedure Initialize();
+
+    procedure SaveToXlsx(FilePath: String);
+    procedure SaveToCsv(FilePath: String);
   end;
 
 var
@@ -271,40 +276,99 @@ begin
 end;
 
 
-{ Save data as CSV }
+
+{ Save data as Excel (xlsx) or CSV }
 procedure TForm1.ButtonSaveClick();
 var
-  i: Integer;
-  SL: TStringList;  { text data for CSV file }
+  FilePath: string;
+  Ext: string;
 begin
   { setting for save dialog }
   with SaveDialog1 do
   begin
-    Filter := 'CSV files (*.csv)|*.csv|All files (*.*)|*.*';
-    DefaultExt := 'csv';
+    Filter := 'Excel files (*.xlsx)|*.xlsx|CSV files (*.csv)|*.csv';
+    SaveDialog1.FilterIndex := 1;   // xlsx
     Options := [ofOverwritePrompt, ofPathMustExist, ofNoChangeDir];
   end;
 
   if SaveDialog1.Execute then
   begin
-    SL := TStringList.Create;
-    try
-      { write header }
-      SL.Add('Time, Drug, Response');
+    FilePath := SaveDialog1.FileName;
 
-      { write data: comma-separeted }
-      for i:= 0 to CounterResult - 1 do
-      begin
-        SL.Add(Format('%.1f, %s, %d',
-            [ResultArray[i].Time, ResultArray[i].Drug, ResultArray[i].Response]));
+    // add extension if not
+    if ExtractFileExt(FilePath) = '' then
+    begin
+      case SaveDialog1.FilterIndex of
+        1: FilePath := FilePath + '.xlsx';
+        2: FilePath := FilePath + '.csv';
       end;
-
-      { save data to file as UTF-8 }
-      SL.SaveToFile(SaveDialog1.FileName, TEncoding.UTF8);
-
-    finally
-      SL.Free;
     end;
+    Ext := LowerCase(ExtractFileExt(FilePath));
+
+    case Ext of
+      '.xlsx': SaveToXlsx(FilePath);
+      '.csv': SaveToCsv(FilePath);
+    end;
+  end;
+end;
+
+
+{ save as Excel (xlsx) }
+procedure TForm1.SaveToXlsx(FilePath: String);
+var
+  Workbook: TsWorkbook;
+  Worksheet: TsWorksheet;
+  i: Integer;
+begin
+  Workbook := TsWorkbook.Create;
+  try
+    Worksheet := Workbook.AddWorksheet('Sheet1');
+
+    //   { write header }
+    Worksheet.WriteText(0, 0, 'Time');
+    Worksheet.WriteText(0, 1, 'Drug');
+    Worksheet.WriteText(0, 2, 'Response');
+
+    { write data }
+    for i:= 0 to CounterResult - 1 do
+    begin
+      Worksheet.WriteNumber(i + 1, 0, ResultArray[i].Time);
+      Worksheet.WriteNumberFormat(Worksheet.GetCell(i + 1, 0), nfFixed, 2);
+      Worksheet.WriteText(i + 1, 1, ResultArray[i].Drug);
+      Worksheet.WriteNumber(i + 1, 2, ResultArray[i].Response);
+    end;
+
+    Workbook.WriteToFile(FilePath, sfOOXML, True);
+
+  finally
+    Workbook.Free;
+  end;
+end;
+
+
+{ save as CSV }
+procedure TForm1.SaveToCsv(FilePath: String);
+var
+  i: Integer;
+  SL: TStringList;  { text data for CSV file }
+begin;
+  SL := TStringList.Create;
+  try
+    { write header }
+    SL.Add('Time, Drug, Response');
+
+    { write data: comma-separeted }
+    for i:= 0 to CounterResult - 1 do
+    begin
+      SL.Add(Format('%.2f, %s, %d',
+          [ResultArray[i].Time, ResultArray[i].Drug, ResultArray[i].Response]));
+    end;
+
+    { save data to file as UTF-8 }
+    SL.SaveToFile(FilePath, TEncoding.UTF8);
+
+  finally
+    SL.Free;
   end;
 end;
 
